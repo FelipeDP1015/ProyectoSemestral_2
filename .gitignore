@@ -1,0 +1,38 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDE / editores
+.vscode/
+.idea/
+*.iml
+
+# Frontend
+node_modules/
+dist/
+build/
+coverage/
+
+# Backend / Maven
+target/
+*.class
+*.jar
+*.war
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.tfstate.lock.info
+terraform.tfvars
+*.tfvars
+crash.log
+crash.*.log
+*.tfplan
