@@ -13,7 +13,7 @@ variable "project_name" {
 variable "key_name" {
   description = "Nombre del par de llaves de EC2 existente en AWS"
   type        = string
-  default     = "vockey"
+  default     = "PruebaSemestralDos"
 }
 
 variable "instance_type" {
