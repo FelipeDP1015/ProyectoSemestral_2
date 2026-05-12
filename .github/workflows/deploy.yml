@@ -35,17 +35,17 @@ jobs:
 
       - name: Build and push frontend image
         run: |
-          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY:latest ./frontend/front_despacho
+          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY:latest ./Frontend/front_despacho
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY:latest
 
       - name: Build and push backend ventas image
         run: |
-          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_VENTAS_REPOSITORY:latest ./backend/back-Ventas_SpringBoot/Springboot-API-REST
+          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_VENTAS_REPOSITORY:latest ./Backend/back-Ventas_SpringBoot/Springboot-API-REST
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_VENTAS_REPOSITORY:latest
 
       - name: Build and push backend despachos image
         run: |
-          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_DESPACHOS_REPOSITORY:latest ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_DESPACHOS_REPOSITORY:latest ./Backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_DESPACHOS_REPOSITORY:latest
 
   deploy:
