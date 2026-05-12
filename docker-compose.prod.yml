@@ -1,0 +1,75 @@
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: innovatech_db
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_USER: innovatech
+      MYSQL_PASSWORD: innovatech123
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - innovatech-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ventas-backend:
+    image: 533267278157.dkr.ecr.us-east-1.amazonaws.com/backend-ventas:latest
+    container_name: ventas-backend
+    restart: unless-stopped
+    environment:
+      DB_ENDPOINT: mysql-db
+      DB_PORT: 3306
+      DB_NAME: innovatech_db
+      DB_USERNAME: innovatech
+      DB_PASSWORD: innovatech123
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - innovatech-net
+
+  despachos-backend:
+    image: 533267278157.dkr.ecr.us-east-1.amazonaws.com/backend-despachos:latest
+    container_name: despachos-backend
+    restart: unless-stopped
+    environment:
+      DB_ENDPOINT: mysql-db
+      DB_PORT: 3306
+      DB_NAME: innovatech_db
+      DB_USERNAME: innovatech
+      DB_PASSWORD: innovatech123
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    networks:
+      - innovatech-net
+
+  frontend:
+    image: 533267278157.dkr.ecr.us-east-1.amazonaws.com/frontend-despacho:latest
+    container_name: frontend-despacho
+    restart: unless-stopped
+    depends_on:
+      - ventas-backend
+      - despachos-backend
+    ports:
+      - "80:8080"
+    networks:
+      - innovatech-net
+
+volumes:
+  mysql_data:
+
+networks:
+  innovatech-net:
+    driver: bridge

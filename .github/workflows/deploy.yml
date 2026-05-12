@@ -1,0 +1,78 @@
+name: CI/CD Deploy to AWS EC2 with ECR
+
+on:
+  push:
+    branches:
+      - deploy
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+
+  ECR_FRONTEND_REPOSITORY: ${{ vars.ECR_FRONTEND_REPOSITORY }}
+  ECR_VENTAS_REPOSITORY: ${{ vars.ECR_VENTAS_REPOSITORY }}
+  ECR_DESPACHOS_REPOSITORY: ${{ vars.ECR_DESPACHOS_REPOSITORY }}
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Images to ECR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push frontend image
+        run: |
+          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY:latest ./frontend/front_despacho
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY:latest
+
+      - name: Build and push backend ventas image
+        run: |
+          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_VENTAS_REPOSITORY:latest ./backend/back-Ventas_SpringBoot/Springboot-API-REST
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_VENTAS_REPOSITORY:latest
+
+      - name: Build and push backend despachos image
+        run: |
+          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_DESPACHOS_REPOSITORY:latest ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_DESPACHOS_REPOSITORY:latest
+
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2_key.pem
+          chmod 600 ~/.ssh/ec2_key.pem
+
+      - name: Copy production compose file to EC2
+        run: |
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/ec2_key.pem docker-compose.prod.yml ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }}:/home/${{ vars.EC2_USER }}/docker-compose.prod.yml
+
+      - name: Deploy containers on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/ec2_key.pem ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }} << 'EOF'
+            aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+
+            docker compose -f /home/${{ vars.EC2_USER }}/docker-compose.prod.yml pull
+            docker compose -f /home/${{ vars.EC2_USER }}/docker-compose.prod.yml up -d
+            docker image prune -f
+          EOF
