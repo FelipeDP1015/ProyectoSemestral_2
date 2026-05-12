@@ -8,7 +8,12 @@ resource "aws_instance" "frontend" {
   user_data = <<-EOF
               #!/bin/bash
               yum update -y
-              yum install -y docker git
+              yum install -y docker git unzip
+
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+              unzip awscliv2.zip
+              ./aws/install
+
               systemctl enable docker
               systemctl start docker
               usermod -aG docker ec2-user
@@ -31,7 +36,12 @@ resource "aws_instance" "backend" {
   user_data = <<-EOF
               #!/bin/bash
               yum update -y
-              yum install -y docker git
+              yum install -y docker git unzip
+
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+              unzip awscliv2.zip
+              ./aws/install
+
               systemctl enable docker
               systemctl start docker
               usermod -aG docker ec2-user
