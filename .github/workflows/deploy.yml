@@ -47,7 +47,7 @@ jobs:
       - name: Build and push frontend image
         run: |
           docker build \
-            -f ./frontend/front_despacho/Dockerfile \
+            -f ./frontend/front_despacho/dockerfile \
             -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY:latest \
             ./frontend/front_despacho
 
@@ -56,7 +56,7 @@ jobs:
       - name: Build and push backend ventas image
         run: |
           docker build \
-            -f ./backend/back-Ventas_SpringBoot/Springboot-API-REST/Dockerfile \
+            -f ./backend/back-Ventas_SpringBoot/Springboot-API-REST/dockerfile \
             -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_VENTAS_REPOSITORY:latest \
             ./backend/back-Ventas_SpringBoot/Springboot-API-REST
 
@@ -65,7 +65,7 @@ jobs:
       - name: Build and push backend despachos image
         run: |
           docker build \
-            -f ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO/Dockerfile \
+            -f ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO/dockerfile \
             -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_DESPACHOS_REPOSITORY:latest \
             ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
 
