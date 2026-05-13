@@ -23,7 +23,7 @@ services:
 
   ventas-backend:
     build:
-      context: ./backend/back-Ventas_SpringBoot/Springboot-API-REST
+      context: ./Backend/back-Ventas_SpringBoot/Springboot-API-REST
       dockerfile: Dockerfile
     container_name: ventas-backend
     restart: unless-stopped
@@ -43,7 +43,7 @@ services:
 
   despachos-backend:
     build:
-      context: ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+      context: ./Backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
       dockerfile: Dockerfile
     container_name: despachos-backend
     restart: unless-stopped
@@ -63,7 +63,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend/front_despacho
+      context: ./Frontend/front_despacho
       dockerfile: Dockerfile
     container_name: frontend-despacho
     restart: unless-stopped

@@ -22,6 +22,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Show repository structure
+        run: |
+          pwd
+          ls -la
+          echo "Frontend:"
+          ls -la ./Frontend/front_despacho
+          echo "Backend ventas:"
+          ls -la ./Backend/back-Ventas_SpringBoot/Springboot-API-REST
+          echo "Backend despachos:"
+          ls -la ./Backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -35,17 +46,26 @@ jobs:
 
       - name: Build and push frontend image
         run: |
-          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY:latest ./frontend/front_despacho
+          docker build \
+            -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY:latest \
+            ./Frontend/front_despacho
+
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY:latest
 
       - name: Build and push backend ventas image
         run: |
-          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_VENTAS_REPOSITORY:latest ./backend/back-Ventas_SpringBoot/Springboot-API-REST
+          docker build \
+            -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_VENTAS_REPOSITORY:latest \
+            ./Backend/back-Ventas_SpringBoot/Springboot-API-REST
+
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_VENTAS_REPOSITORY:latest
 
       - name: Build and push backend despachos image
         run: |
-          docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_DESPACHOS_REPOSITORY:latest ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+          docker build \
+            -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_DESPACHOS_REPOSITORY:latest \
+            ./Backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_DESPACHOS_REPOSITORY:latest
 
   deploy:
@@ -65,11 +85,17 @@ jobs:
 
       - name: Copy production compose file to EC2
         run: |
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/ec2_key.pem docker-compose.prod.yml ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }}:/home/${{ vars.EC2_USER }}/docker-compose.prod.yml
+          scp -o StrictHostKeyChecking=no \
+            -i ~/.ssh/ec2_key.pem \
+            docker-compose.prod.yml \
+            ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }}:/home/${{ vars.EC2_USER }}/docker-compose.prod.yml
 
       - name: Deploy containers on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/ec2_key.pem ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no \
+            -i ~/.ssh/ec2_key.pem \
+            ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }} << 'EOF'
+
             aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
             docker compose -f /home/${{ vars.EC2_USER }}/docker-compose.prod.yml pull
