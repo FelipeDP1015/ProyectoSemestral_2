@@ -27,11 +27,11 @@ jobs:
           pwd
           ls -la
           echo "Frontend:"
-          ls -la ./Frontend/front_despacho
+          ls -la ./frontend/front_despacho
           echo "Backend ventas:"
-          ls -la ./Backend/back-Ventas_SpringBoot/Springboot-API-REST
+          ls -la ./backend/back-Ventas_SpringBoot/Springboot-API-REST
           echo "Backend despachos:"
-          ls -la ./Backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+          ls -la ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -48,7 +48,7 @@ jobs:
         run: |
           docker build \
             -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY:latest \
-            ./Frontend/front_despacho
+            ./frontend/front_despacho
 
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_FRONTEND_REPOSITORY:latest
 
@@ -56,7 +56,7 @@ jobs:
         run: |
           docker build \
             -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_VENTAS_REPOSITORY:latest \
-            ./Backend/back-Ventas_SpringBoot/Springboot-API-REST
+            ./backend/back-Ventas_SpringBoot/Springboot-API-REST
 
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_VENTAS_REPOSITORY:latest
 
@@ -64,7 +64,7 @@ jobs:
         run: |
           docker build \
             -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_DESPACHOS_REPOSITORY:latest \
-            ./Backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+            ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
 
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_DESPACHOS_REPOSITORY:latest
 
@@ -94,7 +94,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no \
             -i ~/.ssh/ec2_key.pem \
-            ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }} << 'EOF'
+            ${{ vars.EC2_USER }}@${{ vars.EC2_HOST }} << EOF
 
             aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
 
