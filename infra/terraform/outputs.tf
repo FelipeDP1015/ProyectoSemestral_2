@@ -1,16 +1,21 @@
-output "frontend_public_ip" {
-  description = "IP publica de la instancia frontend"
-  value       = aws_instance.frontend.public_ip
+output "mysql_public_ip" {
+  description = "IP publica de la EC2 donde corre MySQL"
+  value       = aws_instance.db.public_ip
 }
 
-output "frontend_public_dns" {
-  description = "DNS publico de la instancia frontend"
-  value       = aws_instance.frontend.public_dns
+output "mysql_private_ip" {
+  description = "IP privada de MySQL usada por ECS"
+  value       = aws_instance.db.private_ip
 }
 
-output "backend_private_ip" {
-  description = "IP privada de la instancia backend"
-  value       = aws_instance.backend.private_ip
+output "ecs_cluster_name" {
+  description = "Nombre del cluster ECS"
+  value       = aws_ecs_cluster.main.name
+}
+
+output "ecs_service_name" {
+  description = "Nombre del servicio ECS"
+  value       = aws_ecs_service.app.name
 }
 
 output "frontend_repository_url" {
