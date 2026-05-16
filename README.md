@@ -341,26 +341,6 @@ ECR_DESPACHOS_REPOSITORY=backend-despachos
 
 ---
 
-## Despliegue con GitHub
-
-Desde la raíz del proyecto:
-
-```bash
-git add .
-```
-
-```bash
-git commit -m "Implementar despliegue en ECS"
-```
-
-```bash
-git push origin deploy
-```
-
-Luego se debe revisar el workflow en GitHub Actions.
-
----
-
 ## Validación en AWS
 
 Después del despliegue, revisar:
@@ -440,80 +420,6 @@ Frontend/front_despacho/dockerfile.ecs
 Frontend/front_despacho/nginx.ecs.conf
 docker-compose.yml
 ```
-
----
-
-## Diferencia entre local y AWS
-
-| Ambiente | Ejecución | Archivo principal |
-|---|---|---|
-| Local | Docker Compose | `docker-compose.yml` |
-| AWS | ECS Fargate | `ecs.tf` |
-| Base de datos local | Contenedor MySQL | `docker-compose.yml` |
-| Base de datos AWS | EC2 con MySQL | `compute.tf` |
-| CI/CD | GitHub Actions | `deploy.yml` |
-
----
-
-## Errores comunes
-
-### Credenciales inválidas
-
-Si aparece:
-
-```txt
-InvalidClientTokenId
-```
-
-Revisar que AWS Academy esté iniciado y volver a copiar las credenciales.
-
----
-
-### Task detenida en ECS
-
-Si aparece:
-
-```txt
-Stopped
-```
-
-Revisar:
-
-```txt
-ECS > Service > Events
-```
-
-y también:
-
-```txt
-CloudWatch > Log groups
-```
-
-Posibles causas:
-
-- Imagen no subida a ECR.
-- Falta el tag `latest`.
-- Error de conexión con MySQL.
-- Variables de entorno incorrectas.
-- Puerto mal configurado.
-
----
-
-### Error al eliminar ECR
-
-Si aparece:
-
-```txt
-RepositoryNotEmptyException
-```
-
-Se soluciona agregando en Terraform:
-
-```hcl
-force_delete = true
-```
-
-en los repositorios ECR.
 
 ---
 
