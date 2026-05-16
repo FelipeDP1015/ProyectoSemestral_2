@@ -8,43 +8,13 @@ El proyecto permite ejecutar el sistema de forma local con Docker Compose y desp
 
 ---
 
-## Arquitectura general
+## Diagrama de arquitectura
 
-```txt
-Usuario
-  |
-  v
-Frontend React + Nginx
-  |
-  v
-Backends Spring Boot
-  |
-  |---- Ventas Backend
-  |
-  |---- Despachos Backend
-  |
-  v
-Base de datos MySQL
-```
+A continuación se muestra la arquitectura desplegada en AWS para el proyecto:
 
-En AWS se implementó de la siguiente forma:
+![Diagrama de arquitectura AWS](docs/ArquitecturAws.png)
 
-```txt
-GitHub Actions
-   |
-   v
-Amazon ECR
-   |
-   v
-Amazon ECS Fargate
-   |
-   |---- frontend
-   |---- ventas-backend
-   |---- despachos-backend
-   |
-   v
-EC2 con MySQL
-```
+
 
 ---
 
