@@ -120,7 +120,7 @@ DB_ENDPOINT=mysql-db
 DB_PORT=3306
 DB_NAME=innovatech_db
 DB_USERNAME=innovatech
-DB_PASSWORD=innovatech123
+DB_PASSWORD=**************
 ```
 
 ---
@@ -380,6 +380,8 @@ Settings > Secrets and variables > Actions
 
 ### Secrets
 
+Estos valores son datos sensibles.
+
 ```txt
 AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY
@@ -388,14 +390,15 @@ AWS_SESSION_TOKEN
 
 ### Variables
 
-```txt
-AWS_REGION=us-east-1
-AWS_ACCOUNT_ID=ID_DE_LA_CUENTA_AWS
-ECR_FRONTEND_REPOSITORY=frontend-despacho
-ECR_VENTAS_REPOSITORY=backend-ventas
-ECR_DESPACHOS_REPOSITORY=backend-despachos
-```
+Estas variables se usan para indicar la región, la cuenta de AWS y los nombres de los repositorios ECR.
 
+```txt
+AWS_REGION
+AWS_ACCOUNT_ID
+ECR_FRONTEND_REPOSITORY
+ECR_VENTAS_REPOSITORY
+ECR_DESPACHOS_REPOSITORY
+```
 ---
 
 ## Validación en AWS
@@ -460,23 +463,6 @@ Copiar la IP pública y abrir:
 
 ```txt
 http://IP_PUBLICA
-```
-
----
-
-## Archivos principales modificados o agregados
-
-```txt
-.github/workflows/deploy.yml
-infra/terraform/ecs.tf
-infra/terraform/compute.tf
-infra/terraform/security.tf
-infra/terraform/ecr.tf
-infra/terraform/outputs.tf
-Frontend/front_despacho/dockerfile.ecs
-Frontend/front_despacho/nginx.ecs.conf
-docker-compose.yml
-docs/ArquitecturaAws.png
 ```
 
 ---
