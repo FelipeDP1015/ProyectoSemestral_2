@@ -12,7 +12,7 @@ El proyecto permite ejecutar el sistema de forma local con Docker Compose y desp
 
 A continuación se muestra la arquitectura desplegada en AWS para el proyecto:
 
-![Diagrama de arquitectura AWS](docs/ArquitecturAws.png)
+![Diagrama de arquitectura AWS](docs/ArquitecturaAws.png)
 
 
 
