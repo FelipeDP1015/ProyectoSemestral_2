@@ -14,8 +14,6 @@ A continuación se muestra la arquitectura desplegada en AWS para el proyecto:
 
 ![Diagrama de arquitectura AWS](docs/ArquitecturaAws.png)
 
-
-
 ---
 
 ## Tecnologías utilizadas
@@ -76,6 +74,9 @@ ProyectoSemestral_2/
 │       ├── provider.tf
 │       ├── variables.tf
 │       └── outputs.tf
+│
+├── docs/
+│   └── ArquitecturaAws.png
 │
 ├── docker-compose.yml
 └── README.md
@@ -259,27 +260,113 @@ Esta decisión permite mantener una arquitectura simple, similar al ejemplo trab
 
 ## GitHub Actions
 
-El pipeline se encuentra en:
+El proyecto utiliza GitHub Actions para automatizar el proceso de construcción, publicación y despliegue de los contenedores en AWS.
+
+El workflow se encuentra en:
 
 ```txt
 .github/workflows/deploy.yml
 ```
 
-Se ejecuta automáticamente al hacer push a la rama:
+Este pipeline se ejecuta automáticamente cada vez que se realiza un push a la rama:
 
 ```txt
 deploy
 ```
 
-El pipeline realiza estos pasos:
+---
 
-1. Construye la imagen del frontend.
-2. Sube la imagen del frontend a ECR.
-3. Construye la imagen del backend de ventas.
-4. Sube la imagen de ventas a ECR.
-5. Construye la imagen del backend de despachos.
-6. Sube la imagen de despachos a ECR.
-7. Actualiza el servicio ECS.
+## Flujo del pipeline CI/CD
+
+En la ejecución del workflow se realizan los siguientes pasos:
+
+| Paso | Acción | Descripción |
+|---|---|---|
+| 1 | Set up job | Prepara el ambiente de ejecución en GitHub Actions |
+| 2 | Checkout repository | Descarga el código del repositorio |
+| 3 | Configure AWS credentials | Configura las credenciales de AWS Academy para permitir la conexión con AWS |
+| 4 | Login to Amazon ECR | Inicia sesión en Amazon ECR para poder subir imágenes Docker |
+| 5 | Build and push frontend image | Construye y sube la imagen Docker del frontend a ECR |
+| 6 | Build and push backend ventas image | Construye y sube la imagen Docker del backend de ventas a ECR |
+| 7 | Build and push backend despachos image | Construye y sube la imagen Docker del backend de despachos a ECR |
+| 8 | Force new deployment in ECS | Fuerza una nueva implementación del servicio en ECS |
+| 9 | Complete job | Finaliza el proceso de despliegue |
+
+---
+
+## Qué hace GitHub Actions en el proyecto
+
+GitHub Actions se encarga de automatizar el despliegue de la aplicación. Antes, el proceso podía realizarse manualmente construyendo imágenes Docker, subiéndolas a AWS y actualizando los servicios, pero ahora todo queda automatizado desde el repositorio.
+
+El flujo general es el siguiente:
+
+```txt
+GitHub Actions
+   |
+   v
+Construye imágenes Docker
+   |
+   v
+Sube imágenes a Amazon ECR
+   |
+   v
+Actualiza el servicio en Amazon ECS
+   |
+   v
+ECS ejecuta los contenedores actualizados
+```
+
+---
+
+## Imágenes construidas y publicadas
+
+El pipeline construye tres imágenes Docker:
+
+```txt
+frontend-despacho
+backend-ventas
+backend-despachos
+```
+
+Luego las publica en Amazon ECR con el tag:
+
+```txt
+latest
+```
+
+Esto permite que ECS Fargate pueda descargar las imágenes más recientes y ejecutar la aplicación actualizada.
+
+---
+
+## Actualización del servicio ECS
+
+Al finalizar la construcción y subida de imágenes a ECR, el workflow ejecuta una actualización del servicio ECS.
+
+El comando utilizado es:
+
+```bash
+aws ecs update-service \
+  --cluster proyectosemestral2-cluster \
+  --service app \
+  --force-new-deployment
+```
+
+Este comando obliga a ECS a crear una nueva implementación del servicio `app`, usando las imágenes más recientes almacenadas en ECR.
+
+---
+
+## Resultado esperado del workflow
+
+Cuando el workflow termina correctamente, GitHub Actions muestra todos los pasos con check verde, como evidencia de que el pipeline se ejecutó de forma correcta.
+
+Esto confirma que:
+
+- Las credenciales de AWS fueron configuradas correctamente.
+- GitHub Actions pudo conectarse a Amazon ECR.
+- Las imágenes Docker fueron construidas correctamente.
+- Las imágenes fueron subidas a ECR.
+- El servicio ECS fue actualizado.
+- La aplicación quedó lista para ejecutarse en ECS Fargate.
 
 ---
 
@@ -389,6 +476,7 @@ infra/terraform/outputs.tf
 Frontend/front_despacho/dockerfile.ecs
 Frontend/front_despacho/nginx.ecs.conf
 docker-compose.yml
+docs/ArquitecturaAws.png
 ```
 
 ---
