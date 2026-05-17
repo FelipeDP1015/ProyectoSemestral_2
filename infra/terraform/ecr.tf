@@ -1,6 +1,7 @@
 resource "aws_ecr_repository" "frontend" {
   name                 = var.frontend_repository_name
   image_tag_mutability = "MUTABLE"
+  force_delete = true
 
   image_scanning_configuration {
     scan_on_push = true
@@ -16,6 +17,7 @@ resource "aws_ecr_repository" "frontend" {
 resource "aws_ecr_repository" "backend_ventas" {
   name                 = var.ventas_repository_name
   image_tag_mutability = "MUTABLE"
+  force_delete = true
 
   image_scanning_configuration {
     scan_on_push = true
@@ -31,6 +33,7 @@ resource "aws_ecr_repository" "backend_ventas" {
 resource "aws_ecr_repository" "backend_despachos" {
   name                 = var.despachos_repository_name
   image_tag_mutability = "MUTABLE"
+  force_delete = true
 
   image_scanning_configuration {
     scan_on_push = true
